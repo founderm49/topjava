@@ -3,6 +3,16 @@ package ru.javawebinar.topjava.model;
 import java.time.LocalDateTime;
 
 public class UserMealWithExceed {
+    @Override
+    public String toString() {
+        return "UserMealWithExceed{" +
+                "dateTime=" + dateTime +
+                ", description='" + description + '\'' +
+                ", calories=" + calories +
+                ", exceed=" + exceed +
+                '}';
+    }
+
     private final LocalDateTime dateTime;
 
     private final String description;
