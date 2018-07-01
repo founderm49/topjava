@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
+import ru.javawebinar.topjava.dao.UserDao;
 import ru.javawebinar.topjava.model.MealWithExceed;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -15,6 +16,13 @@ import java.util.List;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
+    private UserDao dao;
+
+    public MealServlet() {
+        super();
+        dao = new UserDao();
+    }
+
     private static final Logger log = getLogger(MealServlet.class);
     private static int caloriesPerDay = 2000;
 
@@ -37,7 +45,7 @@ public class MealServlet extends HttpServlet {
         request.setAttribute("id", id);
 
         if (action.equalsIgnoreCase("delete")) {
-            MealsUtil.removeMeal(id);
+            dao.delete(id);
             log.debug("removed: {}", id);
         }
         if (action.equalsIgnoreCase("edit")) {
@@ -65,14 +73,14 @@ public class MealServlet extends HttpServlet {
 
             switch (action.toLowerCase()) {
                 case "add": {
-                    MealsUtil.addMeal(dateTime, description, calories);
-                    log.debug("added: {}", id);
+                    dao.create(dateTime, description, calories);
+                    log.debug("created new meal: {}", id);
                     break;
                 }
                 case "save": {
                     request.setAttribute("id", id);
-                    MealsUtil.editMeal(id, dateTime, description, calories);
-                    log.debug("saved: {}", id);
+                    dao.update(id, dateTime, description, calories);
+                    log.debug("updated: {}", id);
                     break;
                 }
             }
@@ -84,6 +92,6 @@ public class MealServlet extends HttpServlet {
     }
 
     private List<MealWithExceed> getMealList() {
-        return MealsUtil.getFilteredWithExceeded(MealsUtil.getMeals(), LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
+        return MealsUtil.getFilteredWithExceeded(UserDao.getMeals(), LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
     }
 }
