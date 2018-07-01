@@ -10,19 +10,21 @@ import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class UserDao implements CRUDInterface {
 
-    private static List<Meal> meals;
+    private static final List<Meal> meals;
+    private static final AtomicInteger counter = new AtomicInteger(0);
 
-    public UserDao() {
+    static {
         meals = new CopyOnWriteArrayList<>(Arrays.asList(
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)));
+                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500, 1),
+                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000, 2),
+                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500, 3),
+                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000, 4),
+                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500, 5),
+                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510, 6)));
     }
 
     public static List<Meal> getMeals() {
@@ -36,10 +38,10 @@ public class UserDao implements CRUDInterface {
                 .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
                 .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
                 .toFormatter();
-        meals.add(new Meal(LocalDateTime.parse(dateTime, fmt), description, Integer.parseInt(calories)));
-    }
+        //thread-safe counter
+        meals.add(new Meal(LocalDateTime.parse(dateTime, fmt), description, Integer.parseInt(calories), counter.incrementAndGet()));
 
-    //in this version used to read all list of meals
+    }
     @Override
     public Meal read(String id) {
         return meals.get(Integer.parseInt(id));

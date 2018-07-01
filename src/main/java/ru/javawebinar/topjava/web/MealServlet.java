@@ -16,7 +16,7 @@ import java.util.List;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
-    private UserDao dao;
+    private final UserDao dao;
 
     public MealServlet() {
         super();
@@ -29,7 +29,7 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         log.debug("redirect to meals");
-        request.setAttribute("meals", getMealList());
+        request.setAttribute("meals", getExceededList());
         request.getRequestDispatcher("/meals.jsp").forward(request, response);
 
     }
@@ -40,21 +40,22 @@ public class MealServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
-        String id = request.getParameter("id");
+        String count = request.getParameter("count");
         request.setAttribute("action", action);
-        request.setAttribute("id", id);
+        request.setAttribute("count", count);
 
         if (action.equalsIgnoreCase("delete")) {
-            dao.delete(id);
-            log.debug("removed: {}", id);
+            dao.delete(count);
+            log.debug("deleted entry with ID: {}", count);
         }
+        //additional logic to split dateTime to date && time for better user experience
         if (action.equalsIgnoreCase("edit")) {
             String dateTime = request.getParameter("dateTime");
             String date = dateTime.split("T")[0];
             String time = dateTime.split("T")[1];
             String description = request.getParameter("description");
             String calories = request.getParameter("calories");
-            log.debug("edited: id - {},date - {},time - {},description - {},calories - {}", id, date, time, description, calories);
+            log.debug("edited: id - {},date - {},time - {},description - {},calories - {}", count, date, time, description, calories);
             request.setAttribute("date", date);
             request.setAttribute("time", time);
             request.setAttribute("description", description);
@@ -74,24 +75,24 @@ public class MealServlet extends HttpServlet {
             switch (action.toLowerCase()) {
                 case "add": {
                     dao.create(dateTime, description, calories);
-                    log.debug("created new meal: {}", id);
+                    log.debug("created new meal with ID: {}", count);
                     break;
                 }
                 case "save": {
-                    request.setAttribute("id", id);
-                    dao.update(id, dateTime, description, calories);
-                    log.debug("updated: {}", id);
+                    request.setAttribute("count", count);
+                    dao.update(count, dateTime, description, calories);
+                    log.debug("updated row with ID: {}", count);
                     break;
                 }
             }
         }
-
-        request.setAttribute("meals", getMealList());
+        //unfiltered MealList
+        request.setAttribute("meals", MealsUtil.getFilteredWithExceeded(UserDao.getMeals(), LocalTime.MIN, LocalTime.MAX, caloriesPerDay));
         this.getServletContext().getRequestDispatcher("/meals.jsp").forward(request, response);
 
     }
 
-    private List<MealWithExceed> getMealList() {
+    private List<MealWithExceed> getExceededList() {
         return MealsUtil.getFilteredWithExceeded(UserDao.getMeals(), LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
     }
 }

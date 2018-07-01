@@ -16,7 +16,7 @@
         <th>Calories</th>
         <th colspan="2">Action</th>
     </tr>
-    <c:set var="id" value="${id}"/>
+    <c:set var="count" value="${count}"/>
     <form action="${pageContext.request.contextPath}/meals" method="post">
         <td>
             <input type="date" name="date" id="date" value="${date}"
@@ -33,7 +33,7 @@
         </td>
         <td>
             <input class="button" type="submit" name="action" value="save"/>
-            <input type="hidden" name="id" value="${id}"/>
+            <input type="hidden" name="count" value="${count}"/>
         </td>
     </form>
 </table>

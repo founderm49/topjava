@@ -17,17 +17,18 @@
         <th>Calories</th>
         <th colspan="2">Action</th>
     </tr>
-    <c:set var="count" value="0"/>
+    <c:set var="count" value="0"/> <!-- counter for dynamic row number in UI -->
     <c:forEach items="${meals}" var="meal">
         <tr class="${meal.exceed ? "red" : "green"}">
 
             <td><c:out value="${fn:replace(meal.dateTime, 'T', ' ')}"/></td>
             <td><c:out value="${meal.description}"/></td>
             <td><c:out value="${meal.calories}"/></td>
+
             <td>
                 <form action="${pageContext.request.contextPath}/meals" method="post">
                     <input class="button" type="submit" name="action" value="edit"/>
-                    <input type="hidden" name="id" value="${count}"/>
+                    <input type="hidden" name="count" value="${count}"/>
                     <input type="hidden" name="dateTime" value="${meal.dateTime}"/>
                     <input type="hidden" name="description" value="${meal.description}"/>
                     <input type="hidden" name="calories" value="${meal.calories}"/>
@@ -38,7 +39,7 @@
             <td>
                 <form action="${pageContext.request.contextPath}/meals" method="post">
                     <input class="button" type="submit" name="action" value="delete"/>
-                    <input type="hidden" name="id" value="${count}"/>
+                    <input type="hidden" name="count" value="${count}"/>
                 </form>
             </td>
         </tr>
@@ -73,7 +74,7 @@
             </td>
             <td>
                 <input class="button" type="submit" name="action" value="add"/>
-                <input type="hidden" name="id" value="${count}"/>
+                <input type="hidden" name="count" value="${count}"/>
             </td>
         </form>
     </tr>
