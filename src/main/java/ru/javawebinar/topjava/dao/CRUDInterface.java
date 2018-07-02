@@ -2,13 +2,17 @@ package ru.javawebinar.topjava.dao;
 
 import ru.javawebinar.topjava.model.Meal;
 
+import java.util.Map;
+
 interface CRUDInterface {
-    void create(String dateTime, String description, String calories);
+    Meal create(Meal meal);
 
-    Meal read(String id);
+    Meal read(int id);
 
-    void update(String id, String dateTime, String description, String calories);
+    void update(int id, Meal meal);
 
-    void delete(String id);
+    void delete(int id);
+
+    Map<Integer, Meal> getAll();
 
 }

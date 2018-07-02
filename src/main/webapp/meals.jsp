@@ -17,7 +17,6 @@
         <th>Calories</th>
         <th colspan="2">Action</th>
     </tr>
-    <c:set var="count" value="0"/> <!-- counter for dynamic row number in UI -->
     <c:forEach items="${meals}" var="meal">
         <tr class="${meal.exceed ? "red" : "green"}">
 
@@ -28,7 +27,7 @@
             <td>
                 <form action="${pageContext.request.contextPath}/meals" method="post">
                     <input class="button" type="submit" name="action" value="edit"/>
-                    <input type="hidden" name="count" value="${count}"/>
+                    <input type="hidden" name="id" value="${meal.id}"/>
                     <input type="hidden" name="dateTime" value="${meal.dateTime}"/>
                     <input type="hidden" name="description" value="${meal.description}"/>
                     <input type="hidden" name="calories" value="${meal.calories}"/>
@@ -39,11 +38,10 @@
             <td>
                 <form action="${pageContext.request.contextPath}/meals" method="post">
                     <input class="button" type="submit" name="action" value="delete"/>
-                    <input type="hidden" name="count" value="${count}"/>
+                    <input type="hidden" name="id" value="${meal.id}"/>
                 </form>
             </td>
         </tr>
-        <c:set var="count" value="${count + 1}"/>
     </c:forEach>
 </table>
 
@@ -74,7 +72,7 @@
             </td>
             <td>
                 <input class="button" type="submit" name="action" value="add"/>
-                <input type="hidden" name="count" value="${count}"/>
+                <input type="hidden" name="id" value="${meal.id}"/>
             </td>
         </form>
     </tr>
