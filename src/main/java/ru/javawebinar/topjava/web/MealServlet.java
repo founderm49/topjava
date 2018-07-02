@@ -20,8 +20,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
-    private static MealDao dao;
     private static int caloriesPerDay = 2000;
+    private static MealDao dao;
 
     @Override
     public void init() throws ServletException {
@@ -86,11 +86,16 @@ public class MealServlet extends HttpServlet {
 
             }
             break;
+
             case "delete": {
                 dao.delete(Integer.parseInt(id));
                 log.debug("deleted entry with ID: {}", id);
             }
             break;
+
+            default:
+                log.debug("unsupported action");
+                break;
         }
         request.setAttribute("meals", getExceededList());
         this.getServletContext().getRequestDispatcher("/meals.jsp").forward(request, response);
