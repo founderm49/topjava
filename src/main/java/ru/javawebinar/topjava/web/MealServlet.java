@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -103,6 +102,6 @@ public class MealServlet extends HttpServlet {
     }
 
     private List<MealWithExceed> getExceededList() {
-        return MealsUtil.getFilteredWithExceeded(new ArrayList<>(dao.getAll().values()), LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
+        return MealsUtil.getFilteredWithExceeded(dao.getAll(), LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
     }
 }

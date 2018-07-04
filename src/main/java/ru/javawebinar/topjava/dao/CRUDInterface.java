@@ -2,7 +2,7 @@ package ru.javawebinar.topjava.dao;
 
 import ru.javawebinar.topjava.model.Meal;
 
-import java.util.Map;
+import java.util.List;
 
 interface CRUDInterface {
     Meal create(Meal meal);
@@ -13,6 +13,6 @@ interface CRUDInterface {
 
     void delete(int id);
 
-    Map<Integer, Meal> getAll();
+    List<Meal> getAll();
 
 }
