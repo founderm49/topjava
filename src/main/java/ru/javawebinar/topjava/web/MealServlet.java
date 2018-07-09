@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -38,22 +40,36 @@ public class MealServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        String action = request.getParameter("action");
         String id = request.getParameter("id");
+        if (action == null) {
+            Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+                    LocalDateTime.parse(request.getParameter("dateTime")),
+                    request.getParameter("description"),
+                    Integer.parseInt(request.getParameter("calories")));
 
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                LocalDateTime.parse(request.getParameter("dateTime")),
-                request.getParameter("description"),
-                Integer.parseInt(request.getParameter("calories")));
+            log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
+            if (meal.isNew()) {
+                mealRestController.create(meal);
+            } else {
+                mealRestController.update(meal, getId(request));
+            }
+            response.sendRedirect("meals");
+        } else if (action.equals("filter")) {
+            LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
+            log.debug("startDate: {}", startDate);
+            LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
+            log.debug("endDate: {}", endDate);
+            LocalTime startTime = LocalTime.parse(request.getParameter("startTime"));
+            log.debug("startTime: {}", startTime);
+            LocalTime endTime = LocalTime.parse(request.getParameter("endTime"));
+            log.debug("endTime: {}", endTime);
+            request.setAttribute("meals", mealRestController.getFiltered(startDate, startTime, endDate, endTime));
+            request.getRequestDispatcher("/meals.jsp").forward(request, response);
 
-        log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        if (meal.isNew()) {
-            mealRestController.create(meal);
-        } else {
-            mealRestController.update(meal, getId(request));
         }
-        response.sendRedirect("meals");
     }
 
     @Override
