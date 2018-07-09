@@ -7,11 +7,11 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -63,24 +63,24 @@ public class MealRestController {
 
     public List<MealWithExceed> getFiltered(LocalDate startDate, LocalTime startTime, LocalDate endDate, LocalTime endTime) {
         int userId = SecurityUtil.authUserId();
-        log.info("getAll");
+        log.info("getFiltered");
         if (startDate == null) {
-            log.info("startDate is null");
-            startDate = LocalDate.MIN;
+            log.debug("startDate is null");
+            startDate = DateTimeUtil.START_OF_TIME;
         }
         if (startTime == null) {
-            log.info("startTime is null");
+            log.debug("startTime is null");
             startTime = LocalTime.MIN;
         }
         if (endDate == null) {
-            log.info("endDate is null");
-            endDate = LocalDate.MAX;
+            log.debug("endDate is null");
+            endDate = DateTimeUtil.END_OF_TIME;
         }
         if (endTime == null) {
-            log.info("endTime is null");
+            log.debug("endTime is null");
             endTime = LocalTime.MAX;
         }
-        return MealsUtil.getWithExceeded(service.getBetweenDateTimes(LocalDateTime.of(startDate, startTime), LocalDateTime.of(endDate, endTime), userId), SecurityUtil.authUserCaloriesPerDay());
+        return MealsUtil.getFilteredWithExceeded(service.getBetweenDates(startDate, endDate, userId), SecurityUtil.authUserCaloriesPerDay(), startTime, endTime);
     }
 
 }

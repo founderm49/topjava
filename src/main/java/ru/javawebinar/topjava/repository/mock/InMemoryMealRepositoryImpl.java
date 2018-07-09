@@ -59,11 +59,9 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public List<Meal> getBetweenDateTimes(int userId, LocalDateTime startDate, LocalDateTime endDate) {
-        return repository.values().stream()
-                .filter(meal -> meal.getUserId() == userId)
-                .filter(meal -> DateTimeUtil.isBetween(meal.getDateTime(), startDate, endDate))
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
+    public List<Meal> getBetweenDateTimes(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
+        return getAll(userId).stream()
+                .filter(meal -> DateTimeUtil.isBetween(meal.getDateTime(), startDateTime, endDateTime))
                 .collect(Collectors.toList());
     }
 }

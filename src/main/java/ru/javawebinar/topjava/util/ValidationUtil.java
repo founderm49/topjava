@@ -6,6 +6,10 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 public class ValidationUtil {
 
+    private ValidationUtil() {
+        throw new UnsupportedOperationException("Utility class, can't be instantiated");
+    }
+
     public static <T> T checkNotFoundWithId(T object, int id) {
         return checkNotFound(object, "id=" + id);
     }

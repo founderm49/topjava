@@ -25,10 +25,12 @@ public class Meal extends AbstractBaseEntity {
         this.calories = calories;
     }
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }
@@ -53,6 +55,7 @@ public class Meal extends AbstractBaseEntity {
         return dateTime.toLocalTime();
     }
 
+    @Override
     public boolean isNew() {
         return id == null;
     }

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletConfig;
@@ -57,18 +58,18 @@ public class MealServlet extends HttpServlet {
                 mealRestController.update(meal, getId(request));
             }
             response.sendRedirect("meals");
+
         } else if (action.equals("filter")) {
-            LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
+            LocalDate startDate = DateTimeUtil.parseLocalDate(request.getParameter("startDate"));
             log.debug("startDate: {}", startDate);
-            LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
+            LocalDate endDate = DateTimeUtil.parseLocalDate(request.getParameter("endDate"));
             log.debug("endDate: {}", endDate);
-            LocalTime startTime = LocalTime.parse(request.getParameter("startTime"));
+            LocalTime startTime = DateTimeUtil.parseLocalTime(request.getParameter("startTime"));
             log.debug("startTime: {}", startTime);
-            LocalTime endTime = LocalTime.parse(request.getParameter("endTime"));
+            LocalTime endTime = DateTimeUtil.parseLocalTime(request.getParameter("endTime"));
             log.debug("endTime: {}", endTime);
             request.setAttribute("meals", mealRestController.getFiltered(startDate, startTime, endDate, endTime));
             request.getRequestDispatcher("/meals.jsp").forward(request, response);
-
         }
     }
 
