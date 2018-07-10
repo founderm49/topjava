@@ -43,7 +43,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
                 return repository.remove(id, tempMeal);
             }
         } catch (NullPointerException exception) {
-            //todo logger for catched NPE
+
         }
         return false;
     }
@@ -56,7 +56,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
                 return tempMeal;
             }
         } catch (NullPointerException exception) {
-            //todo logger for catched NPE
+
         }
         return null;
     }
