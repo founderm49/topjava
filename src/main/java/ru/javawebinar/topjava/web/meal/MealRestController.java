@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealWithExceed;
-import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
@@ -66,7 +65,7 @@ public class MealRestController {
         log.info("getFiltered");
         if (startDate == null) {
             log.debug("startDate is null");
-            startDate = DateTimeUtil.START_OF_TIME;
+            startDate = LocalDate.MIN;
         }
         if (startTime == null) {
             log.debug("startTime is null");
@@ -74,7 +73,7 @@ public class MealRestController {
         }
         if (endDate == null) {
             log.debug("endDate is null");
-            endDate = DateTimeUtil.END_OF_TIME;
+            endDate = LocalDate.MAX;
         }
         if (endTime == null) {
             log.debug("endTime is null");

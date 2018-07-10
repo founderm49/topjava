@@ -7,10 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public class DateTimeUtil {
 
-    public static final LocalDate START_OF_TIME = LocalDate.ofYearDay(1, 1);
-
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    public static final LocalDate END_OF_TIME = LocalDate.ofYearDay(9999, 365);
 
     private DateTimeUtil() {
         throw new UnsupportedOperationException("Utility class, can't be instantiated");
