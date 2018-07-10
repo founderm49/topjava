@@ -20,7 +20,13 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
     @Override
     public boolean delete(int id) {
         log.info("delete {}", id);
-        return repository.remove(id, get(id));
+        try {
+            User user = repository.get(id);
+            return repository.remove(id, user);
+        } catch (NullPointerException exception) {
+            //todo logger for NPE
+        }
+        return false;
     }
 
     @Override

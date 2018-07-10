@@ -37,17 +37,28 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
 
     @Override
     public boolean delete(int id, int userId) {
-        if ((userId != repository.get(id).getUserId())) {
-            return false;
-        } else return repository.remove(id, get(id, userId));
+        try {
+            Meal tempMeal = repository.get(id);
+            if ((userId == tempMeal.getUserId())) {
+                return repository.remove(id, tempMeal);
+            }
+        } catch (NullPointerException exception) {
+            //todo logger for catched NPE
+        }
+        return false;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        if ((userId != repository.get(id).getUserId())) {
-            return null;
+        try {
+            Meal tempMeal = repository.get(id);
+            if ((userId == tempMeal.getUserId())) {
+                return tempMeal;
+            }
+        } catch (NullPointerException exception) {
+            //todo logger for catched NPE
         }
-        return repository.get(id);
+        return null;
     }
 
     @Override
