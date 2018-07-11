@@ -41,11 +41,10 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             Meal tempMeal = repository.get(id);
             if ((userId == tempMeal.getUserId())) {
                 return repository.remove(id, tempMeal);
-            }
+            } else return false;
         } catch (NullPointerException exception) {
-
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -54,25 +53,23 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             Meal tempMeal = repository.get(id);
             if ((userId == tempMeal.getUserId())) {
                 return tempMeal;
-            }
+            } else return null;
         } catch (NullPointerException exception) {
-
+            return null;
         }
-        return null;
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return repository.values().stream()
-                .filter(meal -> meal.getUserId() == userId)
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
+        return getBetweenDateTimes(LocalDateTime.MIN, LocalDateTime.MAX, userId);
     }
 
     @Override
     public List<Meal> getBetweenDateTimes(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        return getAll(userId).stream()
+        return repository.values().stream()
+                .filter(meal -> meal.getUserId() == userId)
                 .filter(meal -> DateTimeUtil.isBetween(meal.getDateTime(), startDateTime, endDateTime))
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 }
