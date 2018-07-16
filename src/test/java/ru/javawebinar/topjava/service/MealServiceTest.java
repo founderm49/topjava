@@ -1,6 +1,6 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Before;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -9,19 +9,17 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.MealTestData;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ru.javawebinar.topjava.MealTestData.assertMatch;
+import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
 
@@ -42,53 +40,40 @@ public class MealServiceTest {
     @Autowired
     private MealService service;
 
-    private List<Meal> mealList;
-
-    @Before
-    public void setUp() {
-        mealList = new ArrayList<>(MealTestData.MEALS);
-    }
-
     @Test
     public void create() {
-        Meal meal = new Meal(LocalDateTime.now(), "Test meal", 9999);
-        service.create(meal, USER_ID);
-        mealList.add(meal);
-        Collections.sort(mealList, Comparator.comparing(Meal::getDateTime).reversed());
-        assertMatch(mealList, service.getAll(USER_ID));
-
+        service.create(MEAL_CREATED, USER_ID);
+        assertMatch(Arrays.asList(MEAL_CREATED, MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1), service.getAll(USER_ID));
     }
 
     @Test
     public void get() {
-        Meal meal = service.get(100002, USER_ID);
-        assertMatch(mealList.get(0), meal);
+        Meal meal = service.get(MEAL_ID, USER_ID);
+        assertMatch(MEAL1, meal);
     }
 
     @Test(expected = NotFoundException.class)
-    public void getNegative() {
-        service.get(100002, ADMIN_ID);
+    public void getNotFound() {
+        service.get(MEAL_ID, ADMIN_ID);
     }
 
     @Test
     public void delete() {
-        service.delete(100002, USER_ID);
-        mealList.remove(0);
-        Collections.sort(mealList, Comparator.comparing(Meal::getDateTime).reversed());
-        assertMatch(mealList, service.getAll(USER_ID));
+        service.delete(MEAL_ID, USER_ID);
+        assertMatch(Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2), service.getAll(USER_ID));
 
     }
 
     @Test(expected = NotFoundException.class)
-    public void deleteNegative() {
-        service.delete(100002, ADMIN_ID);
+    public void deleteNotFound() {
+        service.delete(MEAL_ID, ADMIN_ID);
     }
 
     @Test
     public void getBetweenDateTimes() {
         LocalDateTime startDateTime = LocalDateTime.parse("2015-05-31T00:00:00");
         LocalDateTime endDateTime = LocalDateTime.parse("2015-05-31T14:00:00");
-        List<Meal> expectedMeals = mealList.stream()
+        List<Meal> expectedMeals = MEALS.stream()
                 .filter(meal -> DateTimeUtil.isBetween(meal.getDateTime(), startDateTime, endDateTime))
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
@@ -97,28 +82,19 @@ public class MealServiceTest {
 
     @Test
     public void getAll() {
-        Collections.sort(mealList, Comparator.comparing(Meal::getDateTime).reversed());
-        assertMatch(mealList, service.getAll(USER_ID));
+        assertMatch(MEALS, service.getAll(USER_ID));
     }
 
     @Test
     public void update() {
-        Meal expected = new Meal(mealList.get(0));
-        expected.setCalories(9999);
-        Meal meal = service.get(100002, USER_ID);
-        meal.setCalories(9999);
-        service.update(meal, USER_ID);
-        assertMatch(expected, service.get(100002, USER_ID));
+        service.update(MEAL_UPDATED, USER_ID);
+        assertMatch(MEAL_UPDATED, service.get(MEAL_ID, USER_ID));
     }
 
     @Test(expected = NotFoundException.class)
-    public void updateNegative() {
-        Meal expected = new Meal(mealList.get(0));
-        expected.setCalories(9999);
-        Meal meal = service.get(100002, USER_ID);
-        meal.setCalories(9999);
-        service.update(meal, ADMIN_ID);
-        assertMatch(expected, service.get(100002, USER_ID));
+    public void updateNotFound() {
+        service.update(MEAL_UPDATED, ADMIN_ID);
+        assertMatch(MEAL_UPDATED, service.get(MEAL_ID, USER_ID));
     }
 
 }
