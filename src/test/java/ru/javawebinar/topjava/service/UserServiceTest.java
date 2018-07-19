@@ -56,7 +56,7 @@ public class UserServiceTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void notFoundDelete() {
+    public void deletedNotFound() {
         service.delete(1);
     }
 
