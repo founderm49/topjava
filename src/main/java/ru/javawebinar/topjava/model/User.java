@@ -43,15 +43,18 @@ public class User extends AbstractNamedEntity {
     @NotNull
     private Date registered = new Date();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OrderBy("dateTime DESC")
+    protected List<Meal> meals;
+
+    @Column(name = "calories_per_day", columnDefinition = "int default 2000")
+    @Range(min = 10, max = 10000)
+    private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "role")
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
-
-    @Column(name = "calories_per_day", columnDefinition = "int default 2000")
-    @Range(min = 10, max = 10000)
-    private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
 
     public User() {
     }
@@ -120,6 +123,10 @@ public class User extends AbstractNamedEntity {
 
     public void setRoles(Collection<Role> roles) {
         this.roles = CollectionUtils.isEmpty(roles) ? Collections.emptySet() : EnumSet.copyOf(roles);
+    }
+
+    public List<Meal> getMeals() {
+        return meals;
     }
 
     @Override
