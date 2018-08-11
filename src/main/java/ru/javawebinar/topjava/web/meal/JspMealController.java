@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalDate;
@@ -20,30 +21,33 @@ import static ru.javawebinar.topjava.util.DateTimeUtil.parseLocalTime;
 @RequestMapping(value = "/meals")
 public class JspMealController extends AbstractMealController {
 
-    @GetMapping("/")
-    public String root() {
-        return "index";
-    }
-
     @GetMapping("/delete")
     public String delete(HttpServletRequest request) {
         super.delete(getId(request));
-        return "redirect:meals";
+        return "redirect:/meals";
+    }
+
+    @GetMapping
+    public String getAll(Model model) {
+        model.addAttribute("meals", super.getAll());
+        return "meals";
     }
 
     @GetMapping("/update")
     public String update(HttpServletRequest request, Model model) {
         model.addAttribute("meal", super.get(getId(request)));
-        return "meals";
+        model.addAttribute("createReq", "false");
+        return "mealForm";
     }
 
     @GetMapping("/create")
     public String create(Model model) {
-        model.addAttribute("meal", new Meal());
-        return "meals";
+        model.addAttribute("meal", new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000));
+        model.addAttribute("createReq", "true");
+        return "mealForm";
     }
 
-    @PostMapping
+    @PostMapping("/save")
     public String updateOrCreate(HttpServletRequest request) {
         Meal meal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
@@ -57,14 +61,14 @@ public class JspMealController extends AbstractMealController {
         return "redirect:/meals";
     }
 
-    @PostMapping
+    @PostMapping("/filter")
     public String getBetween(HttpServletRequest request, Model model) {
         LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
         LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
         LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
         LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
         model.addAttribute("meals", super.getBetween(startDate, startTime, endDate, endTime));
-        return "forward:/meals";
+        return "meals";
     }
 
     private int getId(HttpServletRequest request) {
